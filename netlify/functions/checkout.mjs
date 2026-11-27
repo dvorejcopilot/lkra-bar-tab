@@ -25,7 +25,7 @@ export default async (req) => {
   for (const c of cart) {
     const p = state.products.find((x) => x.id === c.id);
     const qty = Math.floor(Number(c.qty));
-    if (!p || !(qty > 0 && qty <= 50)) return json({ error: "Neplatná položka v košíku" }, 400);
+    if (!p || p.hidden || !(qty > 0 && qty <= 50)) return json({ error: "Neplatná položka v košíku" }, 400);
     items.push({ id: p.id, name: p.name, emoji: p.emoji, price: p.price, qty });
   }
 

@@ -19,11 +19,25 @@ Všechna data (členové, sklad, útraty) leží na serveru v **Netlify Blobs**.
 
 | Soubor / složka | K čemu slouží |
 |---|---|
-| `src/App.jsx` | Vzhled a chování appky (to, co vytvořil Claude) |
+| `src/App.jsx` | Hlavní kostra appky (tablet vs. správa) |
+| `src/kiosk.jsx` | Tablet v baru: nabídka, košík, PIN, potvrzení |
+| `src/admin/` | Správa: přehled, sklad, naskladnění, inventura, pohyby, členové… |
+| `src/styles.js` | Vzhled (barvy jako CSS proměnné) |
+| `src/components/Logo.jsx` | Logo baru |
+| `src/lib/stock.js` | Výpočty pro sklad (spotřeba, na kolik dní vystačí, nákupní seznam) |
 | `src/shared/data.js` | Počáteční data a pravidla změn (nákup, dobití, naskladnění…) |
 | `netlify/functions/` | Server: `state` (data pro tablet), `checkout` (placení), `admin` (správa), `scan-receipt` (čtení účtenek) |
 | `netlify/lib/store.mjs` | Ukládání dat a ochrana proti hádání PINů |
 | `netlify.toml` | Návod pro Netlify, jak appku sestavit |
+
+## Sklad ve správě
+
+- **Stav skladu**: zásoby s barevným stavem (v pořádku / dochází / vyprodáno), prodeje za 30 dní, odhad na kolik dní zásoba vystačí, hodnota skladu. Kliknutím na produkt upravíš cenu, nákupní cenu, minimum nebo ho skryješ z tabletu.
+- **Nákupní seznam**: co dokoupit a kolik (na 2× minimum nebo ~3 týdny prodeje), jde zkopírovat a po nákupu jedním klikem naskladnit.
+- **Naskladnit**: všechno najednou, s rychlými tlačítky +6/+12/+24, nákupní cenou a poznámkou. Můžeš přidat i nové produkty. Fotka účtenky formulář předvyplní.
+- **Inventura**: zapíšeš napočítané kusy, appka ukáže rozdíly a opraví stav.
+- **Odpis**: rozbité, prošlé, vypito na akci.
+- **Pohyby skladu**: historie všech naskladnění, inventur a odpisů.
 
 ## Bezpečnost (jednoduše)
 
