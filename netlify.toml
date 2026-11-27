@@ -1,0 +1,11 @@
+# Nastavení pro Netlify – říká, jak appku sestavit a kde jsou serverové funkce.
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+# Správa je na adrese /admin (tablet v baru ukazuje jen nabídku pro zákazníky)
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200
