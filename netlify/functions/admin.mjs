@@ -3,9 +3,12 @@
 import { json, readState, updateState, apply, adminState, checkAdmin } from "../lib/store.mjs";
 
 const ALLOWED = new Set([
-  "ADD_STOCK", "APPLY_RECEIPT", "ADD_MEMBER", "TOPUP", "MARK_SENT", "SET_BANK",
-  "SET_THRESHOLD", "ADD_PRODUCT", "DELETE_MEMBER", "DELETE_PRODUCT", "SET_MEMBER_PIN",
+  "ADD_STOCK", "APPLY_RECEIPT", "RESTOCK", "STOCK_COUNT", "WRITE_OFF",
+  "ADD_PRODUCT", "UPDATE_PRODUCT", "DELETE_PRODUCT",
+  "ADD_MEMBER", "TOPUP", "DELETE_MEMBER", "SET_MEMBER_PIN",
+  "MARK_SENT", "SET_BANK", "SET_THRESHOLD",
 ]);
+const isList = (v, max = 500) => v === undefined || (Array.isArray(v) && v.length <= max);
 
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "Použij POST" }, 405);
@@ -19,6 +22,10 @@ export default async (req) => {
   if (!ALLOWED.has(action.type)) return json({ error: "Neznámá akce" }, 400);
   if ((action.type === "ADD_MEMBER" || action.type === "SET_MEMBER_PIN") && !/^\d{4}$/.test(String(action.pin)))
     return json({ error: "PIN musí mít 4 číslice" }, 400);
+  if (!isList(action.items) || !isList(action.newProducts, 100) || !isList(action.counts))
+    return json({ error: "Neplatná data" }, 400);
+  if (action.type === "ADD_PRODUCT" && (typeof action.product !== "object" || !action.product))
+    return json({ error: "Chybí produkt" }, 400);
 
   try { return json(adminState(await updateState(apply(action)))); }
   catch (e) { return json({ error: e.message }, e.status || 500); }

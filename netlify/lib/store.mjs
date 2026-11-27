@@ -37,7 +37,9 @@ export const apply = (action) => (state) => reducer(state, action);
 // Co smí vidět kdokoli (tablet v baru): žádné PINy, e-maily ani zůstatky ostatních.
 export function publicState(s) {
   return {
-    products: s.products,
+    products: s.products
+      .filter((p) => !p.hidden)
+      .map(({ id, name, category, price, emoji, stock, special }) => ({ id, name, category, price, emoji, stock, special })),
     members: s.members.map(({ id, name, avatar }) => ({ id, name, avatar })),
     bankAccount: s.bankAccount,
     lowBalanceThreshold: s.lowBalanceThreshold,
