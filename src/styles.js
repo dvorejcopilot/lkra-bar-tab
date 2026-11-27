@@ -1,13 +1,13 @@
 // Vzhled celé appky. Barvy jsou jako CSS proměnné (--navy, --gold…),
 // takže jdou změnit na jednom místě.
 export const C = {
-  navy: "#1a3a6b", gold: "#c8a84b", green: "#1f8a5b", red: "#c63d2f", amber: "#c97c06",
+  navy: "#2957a5", gold: "#c8a84b", green: "#1f8a5b", red: "#c63d2f", amber: "#c97c06",
   text: "#14213d", muted: "#64748b", border: "#e3e8f0",
 };
 
 export const css = `
 :root {
-  --navy:#1a3a6b; --navy-2:#142d55; --navy-soft:rgba(26,58,107,.08);
+  --navy:#2957a5; --navy-2:#1f4584; --navy-deep:#1c3d78; --navy-soft:rgba(41,87,165,.09);
   --gold:#c8a84b; --gold-2:#b4922f; --gold-soft:#fbf5e4;
   --green:#1f8a5b; --green-soft:#e6f5ee;
   --red:#c63d2f; --red-soft:#fcebe9;
@@ -86,7 +86,7 @@ label, .label { font-size:.8rem; color:var(--muted); display:block; margin-botto
 .meter > span { display:block; height:100%; border-radius:6px; }
 
 /* ── KPI dlaždice ── */
-.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; margin-bottom:20px; }
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:12px; margin-bottom:20px; }
 .stat { background:#fff; border-radius:var(--radius); padding:16px 18px; border:1px solid var(--border); box-shadow:var(--shadow); text-align:left; }
 button.stat { cursor:pointer; font:inherit; color:inherit; }
 button.stat:hover { border-color:var(--navy); }
@@ -95,7 +95,7 @@ button.stat:hover { border-color:var(--navy); }
 .stat-sub { font-size:.78rem; color:var(--muted); margin-top:2px; }
 
 /* ── Tabulky (na mobilu se mění v karty) ── */
-.table-wrap { background:#fff; border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; margin-bottom:18px; }
+.table-wrap { background:#fff; border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow-x:auto; margin-bottom:18px; }
 table { width:100%; border-collapse:collapse; }
 th { text-align:left; padding:11px 14px; font-size:.76rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); background:#f8fafc; border-bottom:1px solid var(--border); font-weight:700; white-space:nowrap; }
 th.r, td.r { text-align:right; }
@@ -147,7 +147,7 @@ tr.clickable { cursor:pointer; }
 
 /* ══ ADMIN ══ */
 .admin { display:flex; min-height:100vh; }
-.sidebar { width:240px; flex-shrink:0; background:var(--navy); color:#fff; padding:18px 12px; display:flex; flex-direction:column; gap:2px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.sidebar { width:240px; flex-shrink:0; background:var(--navy-deep); color:#fff; padding:18px 12px; display:flex; flex-direction:column; gap:2px; position:sticky; top:0; height:100vh; overflow-y:auto; }
 .sidebar .brand { display:flex; align-items:center; gap:10px; padding:4px 8px 18px; }
 .sidebar .brand b { display:block; font-size:1rem; letter-spacing:.02em; }
 .sidebar .brand small { color:rgba(255,255,255,.6); font-size:.78rem; }
@@ -170,7 +170,7 @@ tr.clickable { cursor:pointer; }
 @media (max-width:900px) {
   .admin { flex-direction:column; }
   .sidebar { display:none; }
-  .mobile-top { display:flex; position:sticky; top:0; z-index:20; background:var(--navy); color:#fff; padding:10px 12px; align-items:center; gap:10px; }
+  .mobile-top { display:flex; position:sticky; top:0; z-index:20; background:var(--navy-deep); color:#fff; padding:10px 12px; align-items:center; gap:10px; }
   .mobile-top b { flex:1; }
   .mobile-nav { display:flex; gap:6px; overflow-x:auto; padding:10px 12px; background:#fff; border-bottom:1px solid var(--border); position:sticky; top:56px; z-index:19; scrollbar-width:none; }
   .mobile-nav::-webkit-scrollbar { display:none; }

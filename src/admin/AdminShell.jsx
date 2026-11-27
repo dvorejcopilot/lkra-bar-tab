@@ -100,7 +100,7 @@ export function AdminLoginView({ onLogin, onBack }) {
     if (er) { setErr(er); setPw(""); }
   };
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "linear-gradient(160deg,#1a3a6b,#0f2447)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "linear-gradient(160deg,#2957a5,#16305e)" }}>
       <form onSubmit={submit} className="card" style={{ width: "100%", maxWidth: 360, textAlign: "center", padding: 28, marginBottom: 0 }}>
         <LKRALogo size={64} />
         <h2 style={{ fontWeight: 850, marginTop: 12, fontSize: "1.4rem" }}>Správa baru</h2>
