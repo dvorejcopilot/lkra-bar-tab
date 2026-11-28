@@ -32,14 +32,14 @@ Všechna data (členové, sklad, útraty) leží na serveru v **Netlify Blobs**.
 - Po 5 špatných pokusech se daný člen (nebo admin) na 15 minut zamkne.
 - Heslo správce si nastavíš v Netlify (viz níže). Zvol dlouhé heslo, třeba 3–4 slova.
 
-## Nastavení v Netlify (Site configuration → Environment variables)
+## Nastavení v Netlify (Manage → Keys and secrets → Add a key)
 
 | Proměnná | Povinná? | Co to je |
 |---|---|---|
 | `ADMIN_PASSWORD` | ano | Heslo do správy na `/admin` |
 | `ANTHROPIC_API_KEY` | ne | Klíč z console.anthropic.com, zapne čtení účtenek |
 
-Po změně proměnných dej v Netlify **Deploys → Trigger deploy**, ať se nové nastavení načte.
+Po přidání klíče je potřeba appku znovu nasadit, ať si ho server načte. Nejjednodušší je poslat na GitHub jakoukoli změnu – Netlify pak nasadí samo.
 
 ## Před ostrým provozem
 
