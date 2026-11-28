@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import QR from "qrcode";
+import KioskView from "./kiosk/KioskView.jsx";
 
 // ─── QR code ──────────────────────────────────────────────────────────────────
 // QR kód se generuje přímo v prohlížeči (knihovna "qrcode"), nepotřebuje žádnou cizí službu.
@@ -79,7 +80,7 @@ const C = {
 
 const css = `
 * { box-sizing:border-box; margin:0; padding:0; }
-body { background:${C.bg}; color:${C.text}; font-family:'Segoe UI',system-ui,sans-serif; }
+body { background:${C.bg}; color:${C.text}; font-family:'Figtree','Segoe UI',system-ui,sans-serif; }
 .app { min-height:100vh; }
 .kiosk { max-width:960px; margin:0 auto; padding:20px; }
 .logo-bar { display:flex; align-items:center; gap:16px; padding:12px 0 8px; border-bottom:2px solid ${C.border}; margin-bottom:20px; }
@@ -229,7 +230,7 @@ export default function App() {
 
   const addToCart = (prod) => {
     if(prod.stock<=0) return;
-    setCart(c=>{const ex=c.find(i=>i.id===prod.id);return ex?c.map(i=>i.id===prod.id?{...i,qty:i.qty+1}:i):[...c,{...prod,qty:1}];});
+    setCart(c=>{const ex=c.find(i=>i.id===prod.id);if(ex&&ex.qty>=prod.stock)return c;return ex?c.map(i=>i.id===prod.id?{...i,qty:i.qty+1}:i):[...c,{...prod,qty:1}];});
   };
   const cartTotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
   const cartCount = cart.reduce((s,i)=>s+i.qty,0);
@@ -239,7 +240,7 @@ export default function App() {
     if(!selMember||!cart.length||busy) return "Prázdný košík";
     setBusy(true);
     try {
-      const r = await api("/api/checkout", { memberId: selMember.id, pin, cart: cart.map(i=>({id:i.id,qty:i.qty})) });
+      const r = await api("/api/checkout", { memberId: selMember.id, pin, cart: cart.map(i=>i.custom?{id:i.id,qty:i.qty,custom:true,price:i.price}:{id:i.id,qty:i.qty}) });
       setState(r.state); setResult(r); setView("checkout"); return null;
     } catch (e) { return e.message; }
     finally { setBusy(false); }
@@ -249,78 +250,11 @@ export default function App() {
   return (
     <div className="app">
       <style>{css}</style>
-      {view==="kiosk" && <KioskView state={state} cart={cart} cartCount={cartCount} cartTotal={cartTotal} cats={cats} specials={specials} catFilter={catFilter} setCatFilter={setCatFilter} addToCart={addToCart} setView={setView} setCart={setCart} />}
+      {view==="kiosk" && <KioskView state={state} cart={cart} cartCount={cartCount} cartTotal={cartTotal} cats={cats} specials={specials} catFilter={catFilter} setCatFilter={setCatFilter} addToCart={addToCart} onCheckout={()=>setView("login")} setCart={setCart} />}
       {view==="login" && <LoginView members={state.members} selMember={selMember} setSelMember={setSelMember} onBack={()=>setView("kiosk")} onLogin={doCheckout} />}
       {view==="checkout" && result && <CheckoutView member={result.member} cart={result.cart} cartTotal={result.total} bankAccount={state.bankAccount} threshold={state.lowBalanceThreshold} onDone={finishCheckout} />}
       {view==="adminLogin" && <AdminLoginView onLogin={adminLogin} onBack={isAdminUrl ? null : ()=>setView("kiosk")} />}
       {view==="admin" && state.transactions && <AdminView state={state} dispatch={dispatch} adminView={adminView} setAdminView={setAdminView} onLogout={adminLogout} />}
-    </div>
-  );
-}
-
-// ─── Kiosk ────────────────────────────────────────────────────────────────────
-function KioskView({ state, cart, cartCount, cartTotal, cats, specials, catFilter, setCatFilter, addToCart, setView, setCart }) {
-  const regularProds = state.products.filter(p => !p.special && (catFilter==="Vše" || p.category===catFilter));
-  return (
-    <div className="kiosk">
-      <div className="logo-bar">
-        <LKRALogo size={52} />
-        <div>
-          <h1>Aeroklub Raná</h1>
-          <small>Samoobslužný bar · Vezmi si, zapiš si 🍺</small>
-        </div>
-      </div>
-
-      {/* Specials always first */}
-      {specials.length > 0 && (
-        <div className="specials-banner">
-          <div className="specials-banner-title">⭐ Speciál dne</div>
-          <div className="specials-row">
-            {specials.map(p => {
-              const inCart = cart.find(i=>i.id===p.id);
-              return (
-                <div key={p.id} className={`prod-card special${inCart?" in-cart":""}`} onClick={()=>addToCart(p)} style={{opacity:p.stock===0?.45:1}}>
-                  <div className="prod-emoji">{p.emoji}</div>
-                  <div className="prod-name">{p.name}</div>
-                  <div className="prod-price">{p.price} Kč</div>
-                  <div className="prod-stock">{p.stock>0?`Zbývá: ${p.stock} ks`:"Vyprodáno"}</div>
-                  {inCart && <div style={{marginTop:8,background:C.accent,color:"#fff",borderRadius:20,fontSize:".8rem",fontWeight:800,padding:"3px 10px",display:"inline-block"}}>{inCart.qty}× vybráno</div>}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      <div className="cat-tabs">
-        {cats.map(c=><button key={c} className={`cat-btn${catFilter===c?" active":""}`} onClick={()=>setCatFilter(c)}>{c}</button>)}
-      </div>
-      <div className="product-grid">
-        {regularProds.map(p => {
-          const inCart = cart.find(i=>i.id===p.id);
-          return (
-            <div key={p.id} className={`prod-card${inCart?" in-cart":""}`} onClick={()=>addToCart(p)} style={{opacity:p.stock===0?.45:1}}>
-              <div className="prod-emoji">{p.emoji}</div>
-              <div className="prod-name">{p.name}</div>
-              <div className="prod-price">{p.price} Kč</div>
-              <div className="prod-stock">{p.stock>0?`Skladem: ${p.stock}`:"Vyprodáno"}</div>
-              {inCart && <div style={{marginTop:8,background:C.accent,color:"#fff",borderRadius:20,fontSize:".8rem",fontWeight:800,padding:"3px 10px",display:"inline-block"}}>{inCart.qty}× vybráno</div>}
-            </div>
-          );
-        })}
-      </div>
-      {cartCount>0 && (
-        <div className="cart-bar">
-          <div className="cart-count">{cartCount}</div>
-          <div style={{flex:1}}>
-            <div style={{fontWeight:700,fontSize:"1rem"}}>Košík</div>
-            <div style={{fontSize:".88rem",color:C.muted}}>{cart.map(i=>`${i.name} ×${i.qty}`).join(", ")}</div>
-          </div>
-          <div style={{fontWeight:800,color:C.accent,fontSize:"1.2rem"}}>{cartTotal} Kč</div>
-          <button className="btn btn-primary" onClick={()=>setView("login")}>Zaplatit →</button>
-          <button className="btn btn-ghost" style={{padding:"13px 16px"}} onClick={()=>setCart([])}>🗑</button>
-        </div>
-      )}
     </div>
   );
 }

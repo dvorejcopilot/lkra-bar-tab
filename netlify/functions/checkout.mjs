@@ -23,8 +23,15 @@ export default async (req) => {
   // Sestav košík z aktuálních cen na serveru
   const items = [];
   for (const c of cart) {
-    const p = state.products.find((x) => x.id === c.id);
     const qty = Math.floor(Number(c.qty));
+    // „Jiná položka“ – vlastní částka zadaná na tabletu (není v nabídce, neubírá sklad)
+    if (c && c.custom) {
+      const price = Math.floor(Number(c.price));
+      if (!(price > 0 && price <= 5000) || !(qty > 0 && qty <= 20)) return json({ error: "Neplatná částka" }, 400);
+      items.push({ id: `custom-${String(c.id).replace(/\D/g, "").slice(0, 20)}`, name: "Jiná položka", emoji: "✏️", price, qty, custom: true });
+      continue;
+    }
+    const p = state.products.find((x) => x.id === c.id);
     if (!p || !(qty > 0 && qty <= 50)) return json({ error: "Neplatná položka v košíku" }, 400);
     items.push({ id: p.id, name: p.name, emoji: p.emoji, price: p.price, qty });
   }
