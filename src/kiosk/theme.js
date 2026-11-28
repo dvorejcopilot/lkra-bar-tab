@@ -1,21 +1,4 @@
-// Design tokeny hlavní obrazovky (menu) podle návrhu z Pencilu.
-export const T = {
-  bg: "#F6F3EE",        // pozadí aplikace (teplá krémová)
-  surface: "#FFFFFF",   // karty, panel košíku
-  ink: "#14233D",       // hlavní text
-  ink2: "#5B6475",      // sekundární text
-  ink3: "#8A909C",      // terciární text (sklad)
-  line: "#E7E1D8",      // rámečky karet
-  navy: "#1B3A6B",      // primární barva, logo, vybrané stavy, CTA
-  navySoft: "#E8EEF7",  // jemné navy pozadí (badge)
-  red: "#C8442F",       // „Poslední X ks“
-  tabTrack: "#ECE6DC",  // pozadí přepínače kategorií
-  dashed: "#D3CABC",    // rámeček dlaždice „Jiná položka“
-  // Speciál dne – barva se ještě může změnit, proto jen tady na jednom místě.
-  special: "#E9A23B",
-  specialFrom: "#FBE3B8",
-  specialTo: "#F7CD86",
-};
+// Barvy a fonty hlavní obrazovky jsou jako CSS proměnné v kiosk.css (.k-screen).
 
 // Dlaždice s ikonou produktu: [pozadí, barva ikony]
 const TILE = {
